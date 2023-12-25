@@ -159,13 +159,15 @@ def main():
     bookName = st.text_input('Welk boek heb je gelezen?')
     if bookName:
         with st.form("form", clear_on_submit=True):
-            submitted = st.form_submit_button("Store in database")
+            
             mainSearchContent = bookNameTransform(bookName)
             book_dict, imageLink = bookPageScraper('https://www.bol.com' + mainSearchContent[0].get('href'))
             if book_dict == '-':
                 bookName = False 
             else:
                 rating, beginDate, endDate = new_book_info(book_dict, imageLink)    
+
+            submitted = st.form_submit_button("Store in database")
             
 
         if submitted:
