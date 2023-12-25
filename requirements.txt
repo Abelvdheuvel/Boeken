@@ -3,3 +3,4 @@ bs4==0.0.1
 requests==2.28.1
 pandas==1.5.2
 altair==4.2.0
+deta==1.2.0
