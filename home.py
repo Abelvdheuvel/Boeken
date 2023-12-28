@@ -150,6 +150,30 @@ def graphs(df):
     st.write('Tijdsduur per boek')
     st.altair_chart(ganttChart, use_container_width=True)
 
+def metrics(df):
+    now= pd.Timestamp.now()
+    df['Eind datum'] = pd.to_datetime(df['Eind datum'])
+
+    total_books_this_year = df[df['Eind datum'].dt.year == now.year].shape[0]
+
+    start_date = pd.Timestamp.now() - pd.DateOffset(years=1, months=pd.Timestamp.now().month-1, day=1)
+    end_date = pd.Timestamp.now() - pd.DateOffset(years=1)
+    total_books_last_year_at_this_time = df[(df['Eind datum'] >= start_date) & (df['Eind datum'] <= end_date)].shape[0]
+    books_difference = total_books_this_year - total_books_last_year_at_this_time
+
+
+    df_copy = df.set_index('Eind datum')
+    monthly_average = df_copy.resample('M').count()['Aantal Paginas'].mean()
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric('Totaal aantal boeken dit jaar', 
+                  str(total_books_this_year) + ' boeken', 
+                  delta=books_difference,help='Het onderste getal geeft aan hoeveel meer of minder boeken je hebt gelezen op deze dag vorig jaar')
+    with col2:
+        st.metric('Gemiddeld aantal boeken per maand', round(monthly_average, 1))
+    with col3:
+        st.metric('Gemiddeld aantal paginas per boek', round    (df['Aantal Paginas'].astype(int).mean()))
 
 def main():
     st.title('Boeken')
@@ -182,11 +206,26 @@ def main():
     db_content = db.fetch().items
 
     df_boeken = pd.DataFrame(db_content)
+    df_boeken['Eind datum'] = pd.to_datetime(df_boeken['Eind datum'])
+
+    # If you uncommend the following code it will delete all entries in the database.
+    # Proceed with caution
 
     # for key in df_boeken.key:
     #     expire_at = datetime.datetime.now()
     #     db.update(None, key, expire_at=expire_at)
-    st.table(df_boeken)
+
+    metrics(df_boeken)
+
+    st.dataframe(df_boeken.sort_values('Eind datum'), hide_index=True,column_order=['Naam', 
+                                                           'Auteur', 
+                                                           'Sterren', 
+                                                           'Aantal Paginas', 
+                                                           'Begin Datum', 
+                                                           'Eind datum',
+                                                           'Genre', 
+                                                           'Uitgeef datum', 
+                                                           'Taal'])
 
     graphs(df_boeken)
 
