@@ -18,7 +18,10 @@ def bookPageScraper(url):
     mainContent = soup.find(id='mainContent')
 
     images = soup.find_all("img", class_="js_selected_image")
-    imageLink = images[0].get('src')
+    if len(images) > 0:
+        imageLink = images[0].get('src')
+    else:
+        imageLink = 'Images/no-image.png'
 
     if "noimage_" in imageLink:
         imageLink = 'Images/no-image.png'
