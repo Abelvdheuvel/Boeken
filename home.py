@@ -17,7 +17,8 @@ def bookPageScraper(url):
     soup = BeautifulSoup(page.content, 'html.parser')
     mainContent = soup.find(id='mainContent')
 
-    images = soup.find_all("img", class_="js_selected_image")
+    images = mainContent.find_all("img", class_="book__cover-image")
+
     if len(images) > 0:
         imageLink = images[0].get('src')
     else:
