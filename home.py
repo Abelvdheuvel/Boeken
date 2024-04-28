@@ -18,10 +18,13 @@ def bookPageScraper(url):
     mainContent = soup.find(id='mainContent')
 
     images = soup.find_all("img", class_="js_selected_image")
-    imageLink = images[0].get('src')
+    if len(images) > 0:
+        imageLink = images[0].get('src')
+    else:
+        imageLink = 'https://i.postimg.cc/bvWVrnfN/no-image.png'
 
     if "noimage_" in imageLink:
-        imageLink = 'Images/no-image.png'
+        imageLink = 'https://i.postimg.cc/bvWVrnfN/no-image.png'
 
     titleBook = soup.find("span", attrs={"data-test": "title"}).text
 
@@ -227,7 +230,7 @@ def main():
 
     metrics(df_boeken)
 
-    st.dataframe(df_boeken.sort_values('Eind datum'), hide_index=True,column_order=['Naam', 
+    st.dataframe(df_boeken.sort_values('Eind datum', ascending=False), hide_index=True,column_order=['Naam', 
                                                            'Auteur', 
                                                            'Sterren', 
                                                            'Aantal Paginas', 
