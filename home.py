@@ -22,7 +22,11 @@ def bookPageScraper(url):
     if len(images) > 0:
         imageLink = images[0].get('src')
     else:
-        imageLink = 'https://i.postimg.cc/bvWVrnfN/no-image.png'
+        images = mainContent.find_all("img", id="image-zoom-modal-selected-image")
+        if len(images) > 0:
+            imageLink = images[0].get('src')
+        else:
+            imageLink = 'https://i.postimg.cc/bvWVrnfN/no-image.png'
 
     if "noimage_" in imageLink:
         imageLink = 'https://i.postimg.cc/bvWVrnfN/no-image.png'
